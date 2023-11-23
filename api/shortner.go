@@ -2,7 +2,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"sync"
 
@@ -25,7 +24,6 @@ func NewShortenerAPI(store *database.Store) *ShortenerAPI {
 	}
 }
 
-// CreateShortURL handles URL shortening.
 func (api *ShortenerAPI) CreateShortURL(w http.ResponseWriter, r *http.Request) {
 	var input struct {
 		LongURL string `json:"longUrl"`
@@ -36,12 +34,8 @@ func (api *ShortenerAPI) CreateShortURL(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	// Use the custom hash function to generate the short URL.
+	//hashe function to generate the short URL.
 	shortURL := hash.Hashe(input.LongURL)
-
-	// Print the short URL for debugging purposes
-	fmt.Println("Generated Short URL:", shortURL)
-
 	api.store.SaveURL(models.URL{ShortURL: shortURL, LongURL: input.LongURL})
 
 	response := map[string]string{"shortURL": shortURL}
@@ -49,7 +43,6 @@ func (api *ShortenerAPI) CreateShortURL(w http.ResponseWriter, r *http.Request) 
 	json.NewEncoder(w).Encode(response)
 }
 
-// RedirectURL redirects to the original long URL.
 func (api *ShortenerAPI) RedirectURL(w http.ResponseWriter, r *http.Request) {
 	shortURL := chi.URLParam(r, "shortURL")
 
@@ -76,7 +69,7 @@ func (api *ShortenerAPI) GetAllURLs(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(allURLs)
 }
 
-// SetupRoutes sets up the API routes.
+// API routes.
 func (api *ShortenerAPI) SetupRoutes(r chi.Router) {
 	r.Post("/api/v1/data/shorten", api.CreateShortURL)
 	r.Get("/api/v1/{shortURL}", api.RedirectURL)

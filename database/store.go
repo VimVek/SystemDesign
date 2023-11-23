@@ -7,7 +7,7 @@ import (
 	"github.com/vimvek/urlshortner/models"
 )
 
-// Store represents an in-memory database.
+// In-memory database.
 type Store struct {
 	mu   sync.RWMutex
 	data map[string]string
@@ -20,7 +20,6 @@ func NewStore() *Store {
 	}
 }
 
-// SaveURL saves a URL in the store.
 func (s *Store) SaveURL(url models.URL) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
@@ -28,7 +27,6 @@ func (s *Store) SaveURL(url models.URL) {
 	s.data[url.ShortURL] = url.LongURL
 }
 
-// GetURL retrieves a URL from the store.
 func (s *Store) GetURL(shortURL string) (string, error) {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
